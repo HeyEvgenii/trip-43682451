@@ -1,0 +1,2010 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#1A2238" />
+    <title>Твоё приключение 🎡</title>
+    <style>
+      :root {
+        --coral: #ff5a5f;
+        --mandarin: #ffb454;
+        --lagoon: #12b5a5;
+        --cream: #fff6ec;
+        --ink: #1a2238;
+        --ink-soft: #3a4260;
+        --paper: #fffaf3;
+        --shadow: 0 20px 45px -20px rgba(26, 34, 56, 0.55);
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bot: env(safe-area-inset-bottom, 0px);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+      input,
+      textarea {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+          system-ui, sans-serif;
+        background: radial-gradient(
+          120% 80% at 50% -10%,
+          #2b3a6b 0%,
+          var(--ink) 55%,
+          #10152b 100%
+        );
+        color: var(--cream);
+        min-height: 100dvh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+      }
+      .ambient {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .ambient span {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.14;
+        filter: blur(1px);
+        animation: float linear infinite;
+      }
+      @keyframes float {
+        from {
+          transform: translateY(20px);
+        }
+        to {
+          transform: translateY(-30px);
+        }
+      }
+
+      .app {
+        position: relative;
+        z-index: 1;
+        max-width: 520px;
+        margin: 0 auto;
+        padding: calc(var(--safe-top) + 14px) 20px calc(var(--safe-bot) + 28px);
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        font-size: 13.5px;
+        min-width: 0;
+      }
+      .topbar-btns {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .mini-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 19px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.12s,
+          background 0.2s;
+        line-height: 1;
+      }
+      .mini-btn:active {
+        transform: scale(0.88);
+      }
+      .kiss-btn {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 90, 95, 0.85),
+          rgba(255, 126, 107, 0.85)
+        );
+        border-color: transparent;
+        box-shadow: 0 6px 16px -6px var(--coral);
+      }
+      .music-btn.on {
+        background: linear-gradient(135deg, var(--lagoon), #0e9384);
+        border-color: transparent;
+      }
+      .progress-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 16px;
+      }
+      /* flying kisses */
+      .kiss-fly {
+        position: fixed;
+        z-index: 70;
+        font-size: 34px;
+        pointer-events: none;
+        animation: kissUp 1.4s ease-out forwards;
+      }
+      @keyframes kissUp {
+        0% {
+          transform: translateY(0) scale(0.4) rotate(0);
+          opacity: 0;
+        }
+        15% {
+          opacity: 1;
+          transform: translateY(-10px) scale(1.2) rotate(-8deg);
+        }
+        100% {
+          transform: translateY(-220px) scale(1.6) rotate(10deg);
+          opacity: 0;
+        }
+      }
+      .brand .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--coral);
+        box-shadow: 0 0 0 4px rgba(255, 90, 95, 0.22);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 4px rgba(255, 90, 95, 0.22);
+        }
+        50% {
+          box-shadow: 0 0 0 8px rgba(255, 90, 95, 0);
+        }
+      }
+      .progress-chips {
+        display: flex;
+        gap: 6px;
+      }
+      .chip {
+        height: 22px;
+        min-width: 22px;
+        padding: 0 7px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        background: rgba(255, 255, 255, 0.09);
+        color: rgba(255, 246, 236, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        transition: 0.35s;
+      }
+      .chip.done {
+        background: linear-gradient(135deg, var(--lagoon), #0e9384);
+        color: #fff;
+        border-color: transparent;
+      }
+      .chip.active {
+        background: linear-gradient(135deg, var(--coral), var(--mandarin));
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 6px 16px -6px var(--coral);
+      }
+
+      .stage {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 26px;
+        padding: 22px 18px 26px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .stage::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          90% 60% at 50% 0%,
+          rgba(255, 180, 84, 0.14),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .step-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: rgba(255, 246, 236, 0.55);
+        margin-bottom: 3px;
+      }
+      .step-label .num {
+        font-family: "SF Mono", ui-monospace, Menlo, monospace;
+        color: var(--coral);
+      }
+      .step-title {
+        font-size: 22px;
+        font-weight: 850;
+        line-height: 1.15;
+        margin-bottom: 14px;
+        letter-spacing: -0.3px;
+        text-align: center;
+      }
+      .step-title .accent {
+        color: var(--mandarin);
+      }
+
+      /* ---------- WHEEL ---------- */
+      .wheel-wrap {
+        position: relative;
+        width: min(78vw, 300px);
+        aspect-ratio: 1;
+        margin: 6px auto 8px;
+      }
+      .wheel-pointer {
+        position: absolute;
+        top: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        width: 0;
+        height: 0;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-top: 24px solid var(--cream);
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+      }
+      svg.wheel {
+        width: 100%;
+        height: 100%;
+        display: block;
+        filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.45));
+        transition: transform 5s cubic-bezier(0.16, 0.84, 0.3, 1);
+      }
+      .wheel-hub {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 4;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 30%,
+          #fff,
+          #ffe6c9 45%,
+          var(--mandarin)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow:
+          0 6px 14px rgba(0, 0, 0, 0.35),
+          inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+        border: 3px solid #fff;
+      }
+
+      .spin-btn {
+        margin: 14px auto 0;
+        display: block;
+        border: none;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: 850;
+        letter-spacing: 0.5px;
+        color: #fff;
+        padding: 16px 40px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--coral), var(--mandarin));
+        box-shadow: 0 12px 26px -10px var(--coral);
+        transition:
+          transform 0.12s,
+          box-shadow 0.2s,
+          opacity 0.2s;
+      }
+      .spin-btn:active {
+        transform: scale(0.95);
+      }
+      .spin-btn:disabled {
+        opacity: 0.45;
+        box-shadow: none;
+      }
+
+      /* ---------- PUZZLE ---------- */
+      .puzzle {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex: 1;
+        justify-content: center;
+      }
+      .puzzle .hint {
+        font-size: 15px;
+        color: rgba(255, 246, 236, 0.75);
+        text-align: center;
+        line-height: 1.5;
+      }
+      .puzzle .slots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        min-height: 56px;
+      }
+      .slot {
+        width: 44px;
+        height: 52px;
+        border-radius: 12px;
+        border: 2px dashed rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 850;
+        color: var(--mandarin);
+        transition: 0.2s;
+      }
+      .slot.filled {
+        border-style: solid;
+        border-color: var(--lagoon);
+        background: rgba(18, 181, 165, 0.15);
+        color: #fff;
+      }
+      .letters {
+        display: flex;
+        justify-content: center;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
+      .letter {
+        width: 48px;
+        height: 56px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        font-weight: 850;
+        color: var(--ink);
+        background: linear-gradient(180deg, #fff, #ffeede);
+        box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.12s,
+          opacity 0.2s;
+      }
+      .letter:active {
+        transform: scale(0.9);
+      }
+      .letter.used {
+        opacity: 0.25;
+        pointer-events: none;
+      }
+      .puzzle-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .ghost-btn {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--cream);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 11px 18px;
+        border-radius: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .ghost-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* ---------- REVEAL / prize modal ---------- */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(10, 14, 28, 0.72);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .overlay.show {
+        display: flex;
+        animation: fade 0.3s;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .prize-card {
+        width: 100%;
+        max-width: 360px;
+        max-height: 90vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        background: var(--paper);
+        color: var(--ink);
+        border-radius: 24px;
+        box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.7);
+        opacity: 1;
+        animation: pop 0.4s cubic-bezier(0.2, 1.3, 0.4, 1);
+        position: relative;
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .ticket-top {
+        background: linear-gradient(135deg, var(--coral), var(--mandarin));
+        color: #fff;
+        padding: 18px 22px 16px;
+        position: relative;
+        text-align: center;
+      }
+      .ticket-top .eyebrow {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+
+      /* ---- animated scene inside ticket ---- */
+      .scene {
+        height: 150px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .scene .hero-img {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 140px;
+        filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
+        z-index: 3;
+      }
+      .ticket-emoji {
+        font-size: 56px;
+        line-height: 1;
+        margin: 6px 0 2px;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      }
+
+      /* moto scene — she's actually riding a motorcycle */
+      .scene-moto {
+        background: linear-gradient(
+          180deg,
+          #ffd8a8 0%,
+          #ffb454 55%,
+          #ff9a52 100%
+        );
+      }
+      .rider {
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        width: 150px;
+        height: 130px;
+        z-index: 3;
+        transform: translateX(-50%);
+        animation: ride 1.1s ease-in-out infinite;
+      }
+      @keyframes ride {
+        0%,
+        100% {
+          transform: translateX(-50%) rotate(-3deg) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) rotate(3deg) translateY(-5px);
+        }
+      }
+      .rider .hero-img {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 40px;
+        height: 104px;
+        filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.25));
+        z-index: 2;
+        animation: none;
+      }
+      /* the bike, drawn under her */
+      .bike {
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 128px;
+        height: 64px;
+        z-index: 1;
+      }
+      .bike .wheel-moto {
+        position: absolute;
+        bottom: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #444 34%,
+          #111 36%,
+          #111 60%,
+          #333 62%
+        );
+        border: 3px solid #222;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+        animation: spinW 0.3s linear infinite;
+      }
+      .wheel-moto::after {
+        content: "";
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: repeating-conic-gradient(#aaa 0 18deg, #555 18deg 36deg);
+      }
+      .wheel-moto.l {
+        left: 4px;
+      }
+      .wheel-moto.r {
+        right: 4px;
+      }
+      .bike-body {
+        position: absolute;
+        bottom: 15px;
+        left: 22px;
+        right: 22px;
+        height: 22px;
+        border-radius: 9px 14px 7px 7px;
+        background: linear-gradient(180deg, #ff5a5f, #c8393e);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+      .bike-body::before {
+        content: "";
+        position: absolute;
+        top: -9px;
+        left: 10px;
+        width: 20px;
+        height: 12px;
+        border-radius: 6px;
+        background: #2a2f45;
+      } /* seat */
+      .bike-body::after {
+        content: "";
+        position: absolute;
+        top: -15px;
+        right: 2px;
+        width: 5px;
+        height: 18px;
+        border-radius: 3px;
+        background: #2a2f45;
+        transform: rotate(20deg);
+      } /* handlebar */
+      .headlight {
+        position: absolute;
+        bottom: 22px;
+        right: 16px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fff, #ffe08a);
+        box-shadow: 0 0 10px #ffe08a;
+        z-index: 2;
+      }
+      @keyframes spinW {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .road {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: #3a4260;
+        z-index: 0;
+      }
+      .road::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg,
+          #ffe6c9 0 14px,
+          transparent 14px 30px
+        );
+        animation: road 0.3s linear infinite;
+      }
+      @keyframes road {
+        to {
+          transform: translateX(-30px);
+        }
+      }
+      .zoom {
+        position: absolute;
+        font-size: 18px;
+        opacity: 0.8;
+        animation: zoomBy 0.9s linear infinite;
+        z-index: 0;
+      }
+      @keyframes zoomBy {
+        from {
+          right: -12%;
+          opacity: 0;
+        }
+        20% {
+          opacity: 0.8;
+        }
+        to {
+          right: 108%;
+          opacity: 0;
+        }
+      }
+
+      /* plane scene */
+      .scene-plane {
+        background: linear-gradient(180deg, #bfe3ff 0%, #e8f6ff 100%);
+      }
+      .scene-plane .hero-img {
+        animation: hover 2.4s ease-in-out infinite;
+        height: 132px;
+      }
+      @keyframes hover {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-9px);
+        }
+      }
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 50px;
+        opacity: 0.9;
+        z-index: 1;
+        animation: drift linear infinite;
+      }
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+      }
+      @keyframes drift {
+        from {
+          transform: translateX(120%);
+        }
+        to {
+          transform: translateX(-160%);
+        }
+      }
+      .plane-emoji {
+        position: absolute;
+        top: 14px;
+        font-size: 24px;
+        z-index: 2;
+        animation: flyAcross 3s linear infinite;
+      }
+      @keyframes flyAcross {
+        from {
+          left: -15%;
+        }
+        to {
+          left: 110%;
+        }
+      }
+
+      /* cruise scene */
+      .scene-cruise {
+        background: linear-gradient(
+          180deg,
+          #bfe9ff 0%,
+          #7fc9e8 60%,
+          #4aa3cf 100%
+        );
+      }
+      .scene-cruise .hero-img {
+        animation: rock 3s ease-in-out infinite;
+        height: 118px;
+        bottom: 30px;
+        left: calc(50% - 46px);
+      }
+      @keyframes rock {
+        0%,
+        100% {
+          transform: translateX(-50%) rotate(-2.5deg);
+        }
+        50% {
+          transform: translateX(-50%) rotate(2.5deg);
+        }
+      }
+      .ship {
+        position: absolute;
+        bottom: 26px;
+        left: calc(50% + 16px);
+        font-size: 44px;
+        z-index: 2;
+        animation: rock 3s ease-in-out infinite;
+      }
+      .waves {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 26px;
+        z-index: 5;
+        background: repeating-linear-gradient(
+          90deg,
+          transparent 0 8px,
+          rgba(255, 255, 255, 0.35) 8px 16px
+        );
+        -webkit-mask: radial-gradient(
+            circle at 8px 0,
+            transparent 8px,
+            #000 8px
+          )
+          0 0/16px 16px repeat-x;
+        mask: radial-gradient(circle at 8px 0, transparent 8px, #000 8px) 0
+          0/16px 16px repeat-x;
+        animation: waveMove 1.4s linear infinite;
+      }
+      @keyframes waveMove {
+        to {
+          transform: translateX(-16px);
+        }
+      }
+      .waves2 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 14px;
+        z-index: 4;
+        background: #3f96c4;
+      }
+
+      .perf {
+        height: 0;
+        border-top: 2px dashed rgba(26, 34, 56, 0.25);
+        position: relative;
+        margin: 0 16px;
+      }
+      .perf::before,
+      .perf::after {
+        content: "";
+        position: absolute;
+        top: -11px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(10, 14, 28, 0.72);
+      }
+      .perf::before {
+        left: -27px;
+      }
+      .perf::after {
+        right: -27px;
+      }
+      .ticket-body {
+        padding: 18px 22px 24px;
+        text-align: center;
+      }
+      .prize-name {
+        font-size: 23px;
+        font-weight: 850;
+        line-height: 1.15;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+      .prize-desc {
+        font-size: 14px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+        margin-bottom: 18px;
+        white-space: pre-line;
+      }
+      .prize-code {
+        font-family: "SF Mono", ui-monospace, Menlo, monospace;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: var(--ink-soft);
+        opacity: 0.6;
+        margin-bottom: 16px;
+      }
+      .close-btn {
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 850;
+        color: #fff;
+        padding: 15px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, var(--lagoon), #0e9384);
+        box-shadow: 0 10px 22px -10px var(--lagoon);
+        transition: transform 0.12s;
+      }
+      .close-btn:active {
+        transform: scale(0.96);
+      }
+
+      /* ---------- final ---------- */
+      .final-screen {
+        text-align: center;
+        padding: 20px 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+      }
+      .final-screen .big {
+        font-size: 56px;
+      }
+      .final-screen h2 {
+        font-size: 26px;
+        font-weight: 850;
+      }
+      .final-screen p {
+        font-size: 15px;
+        color: rgba(255, 246, 236, 0.7);
+        line-height: 1.6;
+      }
+      .replay {
+        margin-top: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: var(--cream);
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        align-self: center;
+      }
+
+      #confetti {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 60;
+        display: none;
+      }
+      .secret {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 46px;
+        height: 46px;
+        z-index: 80;
+      }
+      .footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .footer-note {
+        text-align: center;
+        font-size: 11px;
+        color: rgba(255, 246, 236, 0.32);
+        letter-spacing: 0.3px;
+      }
+      .edit-fab {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 246, 236, 0.4);
+        font-size: 13px;
+        cursor: pointer;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.12s,
+          background 0.2s;
+      }
+      .edit-fab:active {
+        transform: scale(0.85);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      /* ---------- EDITOR ---------- */
+      .editor {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: var(--ink);
+        display: none;
+        flex-direction: column;
+        padding: calc(var(--safe-top) + 14px) 0 0;
+      }
+      .editor.show {
+        display: flex;
+      }
+      .ed-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .ed-head h3 {
+        font-size: 18px;
+        font-weight: 850;
+      }
+      .ed-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 18px calc(var(--safe-bot) + 90px);
+        -webkit-overflow-scrolling: touch;
+      }
+      .ed-tip {
+        font-size: 13px;
+        color: rgba(255, 246, 236, 0.55);
+        line-height: 1.5;
+        margin-bottom: 14px;
+      }
+      .ed-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .ed-item .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .ed-item .row:last-child {
+        margin-bottom: 0;
+      }
+      .ed-emoji-in {
+        width: 58px;
+        height: 52px;
+        text-align: center;
+        font-size: 26px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .ed-field {
+        flex: 1;
+      }
+      .ed-field label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: rgba(255, 246, 236, 0.5);
+        margin-bottom: 4px;
+      }
+      .ed-field input,
+      .ed-field textarea {
+        width: 100%;
+        border-radius: 11px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        padding: 11px 12px;
+        font-size: 15px;
+        font-family: inherit;
+        resize: none;
+      }
+      .ed-field textarea {
+        min-height: 64px;
+        line-height: 1.4;
+      }
+      .ed-badge {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--mandarin);
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ed-del {
+        background: rgba(255, 90, 95, 0.15);
+        color: var(--coral);
+        border: none;
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+      }
+      .ed-type {
+        font-size: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 3px 8px;
+        border-radius: 6px;
+        color: rgba(255, 246, 236, 0.6);
+      }
+      .ed-add {
+        width: 100%;
+        border: 1px dashed rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: var(--cream);
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 4px;
+      }
+      .ed-foot {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px 18px calc(var(--safe-bot) + 14px);
+        background: linear-gradient(180deg, transparent, var(--ink) 30%);
+        display: flex;
+        gap: 10px;
+      }
+      .ed-save {
+        flex: 1;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 850;
+        color: #fff;
+        padding: 15px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--lagoon), #0e9384);
+      }
+      .ed-reset {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: transparent;
+        color: rgba(255, 246, 236, 0.7);
+        padding: 15px 18px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .ed-close {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #fff;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 360px) {
+        .step-title {
+          font-size: 20px;
+        }
+        .letter {
+          width: 42px;
+          height: 50px;
+          font-size: 21px;
+        }
+        .slot {
+          width: 38px;
+          height: 48px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ambient span,
+        .brand .dot {
+          animation: none;
+        }
+        svg.wheel {
+          transition: transform 1.2s ease-out;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient" id="ambient"></div>
+    <div class="secret" id="secret"></div>
+
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">
+          <span class="dot"></span> HAPPY&nbsp;BDAY&nbsp;TRIP
+        </div>
+        <div class="topbar-btns">
+          <button class="mini-btn kiss-btn" id="kissBtn" title="Поцелуйчик">
+            💋
+          </button>
+          <button class="mini-btn music-btn" id="musicBtn" title="Музыка">
+            🎵
+          </button>
+        </div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-chips" id="chips"></div>
+      </div>
+
+      <div class="stage" id="stage"></div>
+
+      <div class="footer-row">
+        <button
+          class="edit-fab"
+          id="editFab"
+          title="Редактор"
+          aria-label="Редактор призов"
+        >
+          ⚙︎
+        </button>
+        <p class="footer-note">Сделано с любовью • 09.07 🎂</p>
+      </div>
+    </div>
+
+    <!-- prize overlay -->
+    <div class="overlay" id="overlay">
+      <div class="prize-card" id="prizeCard">
+        <div class="ticket-top">
+          <div class="eyebrow" id="prizeEyebrow">Приз разблокирован</div>
+          <div id="sceneMount"></div>
+        </div>
+        <div class="perf"></div>
+        <div class="ticket-body">
+          <div class="prize-name" id="prizeName">—</div>
+          <div class="prize-desc" id="prizeDesc">—</div>
+          <div class="prize-code" id="prizeCode"></div>
+          <button class="close-btn" id="closeBtn">Принять подарок 💛</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="editor" id="editor">
+      <div class="ed-head">
+        <h3>Редактор призов 🎨</h3>
+        <button class="ed-close" id="edClose">✕</button>
+      </div>
+      <div class="ed-body">
+        <p class="ed-tip">
+          Меняй эмодзи и тексты призов. «wheel» — колесо, «puzzle» — загадка.
+          Новые призы добавляются как колесо. Изменения сохраняются в этом
+          телефоне.
+        </p>
+        <div id="edList"></div>
+        <button class="ed-add" id="edAdd">＋ Добавить приз (колесо)</button>
+      </div>
+      <div class="ed-foot">
+        <button class="ed-reset" id="edReset">Сброс</button>
+        <button class="ed-save" id="edSave">Сохранить</button>
+      </div>
+    </div>
+
+    <canvas id="confetti"></canvas>
+
+    <script>
+      /* =========================================================
+   СЦЕНАРИЙ — можно менять здесь ИЛИ через 🎨 редактор (секретный тап).
+   type "wheel" | "puzzle"
+   scene: "moto" | "plane" | "cruise" | null — анимация в карточке приза
+   ========================================================= */
+      const DEFAULT_STEPS = [
+        {
+          type: "wheel",
+          label: "00:00 · Дома",
+          heading: "Первый оборот 🎂",
+          prizeIndex: 0,
+          prize: {
+            emoji: "💋",
+            scene: null,
+            eyebrow: "Приз №1",
+            name: "Поцелуйчик",
+            desc: "Иди сюда. Этот приз вручается лично и прямо сейчас 😘",
+            code: "KISS · 00:00",
+          },
+        },
+        {
+          type: "wheel",
+          label: "00:05 · Дома",
+          heading: "Второй оборот ✈️",
+          prizeIndex: 2,
+          prize: {
+            emoji: "✈️",
+            scene: "plane",
+            eyebrow: "Посадочный талон",
+            name: "Летим в Хайфон!",
+            desc: "Просыпаемся в 6:30, в аэропорту к 8:20 — вылет в 9:30.\n приключения начинаются! 🌊",
+            code: "FLIGHT · DAD → HPH",
+          },
+        },
+        {
+          type: "puzzle",
+          label: "День · Хайфон",
+          heading: "Собери слово 🧩",
+          answer: "ШЛЕМ",
+          hint: "Без чего нельзя садиться на байк? 🪖 (4 буквы)",
+          prize: {
+            emoji: "🏍️",
+            scene: "moto",
+            eyebrow: "Приз №3",
+            name: "Курс вождения мотоцикла",
+            desc: "Целый курс обучения вождению мотоцикла — от нуля до уверенной езды.\nСкоро дороги будут твои 💨",
+            code: "MOTO · FULL COURSE",
+          },
+        },
+        {
+          type: "wheel",
+          label: "Ужин · Хайфон",
+          heading: "Третий оборот 🍽️",
+          prizeIndex: 4,
+          prize: {
+            emoji: "🛳️",
+            scene: "cruise",
+            eyebrow: "Билет на борт",
+            name: "Люкс-круиз по островам",
+            desc: "3 дня на luxury-круизе среди островов бухты.\nЗавтра выезжаем в 10:40 — к бухте нужно быть не позже 12:30 ✨",
+            code: "CRUISE · 3 DAYS",
+          },
+        },
+        {
+          type: "wheel",
+          label: "Финал · После круиза",
+          heading: "Последний оборот 💫",
+          prizeIndex: 1,
+          prize: {
+            emoji: "🎁",
+            scene: null,
+            eyebrow: "Подарок X",
+            name: "Загадочный сюрприз",
+            desc: "Сюрприз ждёт тебя💛",
+            code: "SURPRISE · FOR YOU",
+          },
+        },
+      ];
+
+      /* Сегменты колеса (визуал). prizeIndex шага ссылается сюда. */
+      const WHEEL = [
+        { emoji: "💋", color: "#FF5A5F" },
+        { emoji: "🎁", color: "#FFB454" },
+        { emoji: "✈️", color: "#12B5A5" },
+        { emoji: "💖", color: "#FF7E6B" },
+        { emoji: "🛳️", color: "#3AA0FF" },
+        { emoji: "🍹", color: "#FFB454" },
+        { emoji: "🌺", color: "#FF5A5F" },
+        { emoji: "🏝️", color: "#12B5A5" },
+      ];
+
+      const STORE_KEY = "bdayTripSteps_v1";
+      function loadSteps() {
+        try {
+          const s = localStorage.getItem(STORE_KEY);
+          if (s) {
+            return JSON.parse(s);
+          }
+        } catch (e) {}
+        return JSON.parse(JSON.stringify(DEFAULT_STEPS));
+      }
+      function saveSteps() {
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify(STEPS));
+        } catch (e) {}
+      }
+      let STEPS = loadSteps();
+
+      /* ================= state ================= */
+      let current = 0,
+        wheelAngle = 0,
+        busy = false,
+        forceIndex = null,
+        kissMode = false;
+      const $ = (s) => document.querySelector(s);
+      const stage = $("#stage");
+
+      /* ambient dots */
+      (function () {
+        const c = $("#ambient"),
+          colors = ["#FF5A5F", "#FFB454", "#12B5A5"];
+        for (let i = 0; i < 14; i++) {
+          const s = document.createElement("span");
+          const sz = 6 + Math.random() * 22;
+          s.style.width = s.style.height = sz + "px";
+          s.style.left = Math.random() * 100 + "%";
+          s.style.top = Math.random() * 100 + "%";
+          s.style.background = colors[i % 3];
+          s.style.animationDuration = 3 + Math.random() * 4 + "s";
+          s.style.animationDirection =
+            Math.random() > 0.5 ? "alternate" : "alternate-reverse";
+          c.appendChild(s);
+        }
+      })();
+
+      function renderChips() {
+        const chips = $("#chips");
+        chips.innerHTML = "";
+        STEPS.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className =
+            "chip" +
+            (i < current ? " done" : "") +
+            (i === current ? " active" : "");
+          d.textContent = i < current ? "✓" : i + 1;
+          chips.appendChild(d);
+        });
+      }
+
+      /* ================= WHEEL ================= */
+      function buildWheelSVG() {
+        const n = WHEEL.length,
+          R = 100,
+          cx = 100,
+          cy = 100,
+          seg = 360 / n;
+        let paths = "";
+        for (let i = 0; i < n; i++) {
+          const a0 = ((i * seg - 90) * Math.PI) / 180,
+            a1 = (((i + 1) * seg - 90) * Math.PI) / 180;
+          const x0 = cx + R * Math.cos(a0),
+            y0 = cy + R * Math.sin(a0);
+          const x1 = cx + R * Math.cos(a1),
+            y1 = cy + R * Math.sin(a1);
+          paths += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${R},${R} 0 0,1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${WHEEL[i].color}" stroke="#fffaf3" stroke-width="1.5"/>`;
+          const am = (((i + 0.5) * seg - 90) * Math.PI) / 180,
+            er = R * 0.66;
+          const ex = cx + er * Math.cos(am),
+            ey = cy + er * Math.sin(am);
+          paths += `<text x="${ex.toFixed(2)}" y="${ey.toFixed(2)}" font-size="20" text-anchor="middle" dominant-baseline="central" transform="rotate(${(i + 0.5) * seg},${ex.toFixed(2)},${ey.toFixed(2)})">${WHEEL[i].emoji}</text>`;
+        }
+        return `<svg class="wheel" viewBox="0 0 200 200" id="wheelSvg"><circle cx="100" cy="100" r="100" fill="#fffaf3"/>${paths}</svg>`;
+      }
+      function renderWheel(step) {
+        stage.innerHTML = `
+    <div class="step-label"><span class="num">${String(current + 1).padStart(2, "0")}</span> ${step.label}</div>
+    <div class="step-title">${step.heading}</div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer"></div>
+      ${buildWheelSVG()}
+      <div class="wheel-hub">🎡</div>
+    </div>
+    <button class="spin-btn" id="spinBtn">Крутить колесо</button>`;
+        $("#wheelSvg").style.transform = `rotate(${wheelAngle}deg)`;
+        $("#spinBtn").addEventListener("click", () => spin(step));
+      }
+      function spin(step) {
+        if (busy) return;
+        busy = true;
+        $("#spinBtn").disabled = true;
+        haptic();
+        if (!musicTouched) startMusic(); // gently start music on first spin
+        const n = WHEEL.length,
+          seg = 360 / n;
+        let target = forceIndex !== null ? forceIndex : step.prizeIndex || 0;
+        forceIndex = null;
+        const spins = 5 + Math.floor(Math.random() * 2);
+        const targetCenter = target * seg + seg / 2;
+        const base = wheelAngle % 360;
+        let delta = (360 - ((base + targetCenter) % 360)) % 360;
+        const jitter = (Math.random() * 0.5 - 0.25) * seg;
+        wheelAngle += spins * 360 + delta + jitter;
+        $("#wheelSvg").style.transform = `rotate(${wheelAngle}deg)`;
+        setTimeout(() => {
+          busy = false;
+          showPrize(step.prize);
+        }, 5100);
+      }
+
+      /* ================= PUZZLE ================= */
+      function renderPuzzle(step) {
+        const answer = step.answer.toUpperCase();
+        const scrambled = scrambleWord(answer);
+        stage.innerHTML = `
+    <div class="step-label"><span class="num">${String(current + 1).padStart(2, "0")}</span> ${step.label}</div>
+    <div class="step-title">${step.heading}</div>
+    <div class="puzzle">
+      <p class="hint">${step.hint}</p>
+      <div class="slots" id="slots"></div>
+      <div class="letters" id="letters"></div>
+      <div class="puzzle-actions"><button class="ghost-btn" id="clearBtn">↺ Сбросить</button></div>
+    </div>`;
+        const slots = $("#slots"),
+          letters = $("#letters"),
+          filled = [];
+        for (let i = 0; i < answer.length; i++) {
+          const s = document.createElement("div");
+          s.className = "slot";
+          slots.appendChild(s);
+        }
+        scrambled.forEach((ch) => {
+          const b = document.createElement("button");
+          b.className = "letter";
+          b.textContent = ch;
+          b.addEventListener("click", () => {
+            if (b.classList.contains("used")) return;
+            const pos = filled.length;
+            if (pos >= answer.length) return;
+            const slot = slots.children[pos];
+            slot.textContent = ch;
+            slot.classList.add("filled");
+            b.classList.add("used");
+            filled.push({ ch, btn: b, slot });
+            haptic();
+            if (filled.length === answer.length) {
+              const guess = filled.map((f) => f.ch).join("");
+              if (guess === answer) {
+                setTimeout(() => showPrize(step.prize), 350);
+              } else {
+                slots.classList.add("shake");
+                setTimeout(resetPuzzle, 500);
+              }
+            }
+          });
+          letters.appendChild(b);
+        });
+        function resetPuzzle() {
+          filled.forEach((f) => {
+            f.slot.textContent = "";
+            f.slot.classList.remove("filled");
+            f.btn.classList.remove("used");
+          });
+          filled.length = 0;
+          slots.classList.remove("shake");
+        }
+        $("#clearBtn").addEventListener("click", () => {
+          resetPuzzle();
+          haptic();
+        });
+      }
+
+      /* ================= PRIZE + SCENES ================= */
+      function sceneHTML(scene) {
+        if (scene === "moto")
+          return `
+    <div class="scene scene-moto">
+      <span class="zoom" style="bottom:44px;animation-duration:.7s">💨</span>
+      <span class="zoom" style="bottom:78px;animation-duration:1s;animation-delay:.3s">🌴</span>
+      <span class="zoom" style="bottom:20px;animation-duration:.8s;animation-delay:.5s;font-size:13px">💨</span>
+      <div class="rider">
+        <img class="hero-img" src="helmet.png" alt="" onerror="this.onerror=null;this.src='moto.png'">
+        <div class="bike">
+          <div class="bike-body"></div>
+          <div class="headlight"></div>
+          <div class="wheel-moto l"></div><div class="wheel-moto r"></div>
+        </div>
+      </div>
+      <div class="road"></div>
+    </div>`;
+        if (scene === "plane")
+          return `
+    <div class="scene scene-plane">
+      <div class="cloud" style="width:50px;height:18px;top:20px;animation-duration:7s"></div>
+      <div class="cloud" style="width:36px;height:14px;top:60px;animation-duration:9s;animation-delay:2s"></div>
+      <span class="plane-emoji">✈️</span>
+      <img class="hero-img" src="travel.png" alt="" onerror="this.style.display='none'">
+    </div>`;
+        if (scene === "cruise")
+          return `
+    <div class="scene scene-cruise">
+      <img class="hero-img" src="cruise.png" alt="" onerror="this.style.display='none'">
+      <span class="ship">🛳️</span>
+      <div class="waves2"></div><div class="waves"></div>
+    </div>`;
+        return "";
+      }
+      function showPrize(prize) {
+        $("#prizeEyebrow").textContent = prize.eyebrow || "Приз разблокирован";
+        const mount = $("#sceneMount");
+        if (prize.scene) {
+          mount.innerHTML = sceneHTML(prize.scene);
+        } else {
+          mount.innerHTML = `<div class="ticket-emoji">${prize.emoji || "🎁"}</div>`;
+        }
+        $("#prizeName").textContent = prize.name;
+        $("#prizeDesc").textContent = prize.desc;
+        $("#prizeCode").textContent = prize.code || "";
+        const card = $("#prizeCard");
+        card.scrollTop = 0;
+        // re-trigger pop animation without ever leaving the card invisible
+        card.style.animation = "none";
+        void card.offsetWidth;
+        card.style.animation = "pop 0.4s cubic-bezier(0.2,1.3,0.4,1)";
+        $("#overlay").classList.add("show");
+        fireConfetti();
+        haptic(true);
+      }
+      $("#closeBtn").addEventListener("click", () => {
+        $("#overlay").classList.remove("show");
+        if (kissMode) {
+          kissMode = false;
+          return;
+        } // kiss button: don't advance
+        current++;
+        if (current < STEPS.length) {
+          goStep();
+        } else {
+          renderFinal();
+        }
+      });
+
+      /* ================= FLOW ================= */
+      function goStep() {
+        const step = STEPS[current];
+        renderChips();
+        if (step.type === "wheel") renderWheel(step);
+        else if (step.type === "puzzle") renderPuzzle(step);
+        window.scrollTo(0, 0);
+      }
+      function renderFinal() {
+        renderChips();
+        stage.innerHTML = `
+    <div class="final-screen">
+      <div class="big">🎉💛🎂</div>
+      <h2>Все сюрпризы открыты</h2>
+      <p>С днём рождения, любимая ✨</p>
+      <button class="replay" id="replayBtn">↺ Пройти заново</button>
+    </div>`;
+        fireConfetti(true);
+        $("#replayBtn").addEventListener("click", () => {
+          current = 0;
+          wheelAngle = 0;
+          goStep();
+        });
+      }
+
+      /* ================= CONFETTI ================= */
+      const cv = $("#confetti"),
+        ctx = cv.getContext("2d");
+      let parts = [],
+        raf = null;
+      function fireConfetti(big) {
+        cv.style.display = "block";
+        cv.width = innerWidth;
+        cv.height = innerHeight;
+        const cols = ["#FF5A5F", "#FFB454", "#12B5A5", "#fffaf3", "#3AA0FF"];
+        const count = big ? 160 : 90;
+        for (let i = 0; i < count; i++) {
+          parts.push({
+            x: innerWidth / 2 + (Math.random() - 0.5) * 120,
+            y: innerHeight * 0.35,
+            vx: (Math.random() - 0.5) * 12,
+            vy: -6 - Math.random() * 10,
+            g: 0.28 + Math.random() * 0.15,
+            s: 6 + Math.random() * 8,
+            c: cols[i % cols.length],
+            rot: Math.random() * 6,
+            vr: (Math.random() - 0.5) * 0.4,
+            life: 0,
+          });
+        }
+        if (!raf) loopConfetti();
+      }
+      function loopConfetti() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        parts = parts.filter((p) => p.life < 140 && p.y < cv.height + 40);
+        parts.forEach((p) => {
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          p.life++;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.c;
+          ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.6);
+          ctx.restore();
+        });
+        if (parts.length) {
+          raf = requestAnimationFrame(loopConfetti);
+        } else {
+          raf = null;
+          cv.style.display = "none";
+        }
+      }
+
+      function haptic(strong) {
+        if (navigator.vibrate) {
+          navigator.vibrate(strong ? [10, 30, 60] : 12);
+        }
+      }
+
+      /* ================= KISS BUTTON ================= */
+      const KISS_PRIZE = {
+        emoji: "💋",
+        scene: null,
+        eyebrow: "Внеочередной приз",
+        name: "Поцелуйчик 💋",
+        desc: "Этот приз можно получать сколько угодно раз.\nИди сюда 😘",
+        code: "KISS · ∞",
+      };
+      function flyKisses(x, y) {
+        const emojis = ["💋", "💕", "😘", "💖"];
+        for (let i = 0; i < 6; i++) {
+          const s = document.createElement("div");
+          s.className = "kiss-fly";
+          s.textContent = emojis[i % emojis.length];
+          s.style.left = x - 17 + (Math.random() - 0.5) * 60 + "px";
+          s.style.top = y - 10 + "px";
+          s.style.animationDelay = i * 0.06 + "s";
+          s.style.fontSize = 26 + Math.random() * 16 + "px";
+          document.body.appendChild(s);
+          setTimeout(() => s.remove(), 1600);
+        }
+      }
+      $("#kissBtn").addEventListener("click", (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        flyKisses(r.left + r.width / 2, r.top);
+        haptic();
+        kissMode = true; // don't advance the scenario
+        showPrize(KISS_PRIZE);
+      });
+
+      /* ================= MUSIC (your mp3, fallback to built-in tune) ================= */
+      let musicOn = false,
+        musicTouched = false;
+      const bgAudio = new Audio("music.mp3");
+      bgAudio.loop = true;
+      bgAudio.volume = 0.55;
+      bgAudio.preload = "auto";
+      let mp3Ok = true;
+      bgAudio.addEventListener("error", () => {
+        mp3Ok = false;
+      });
+
+      /* --- built-in fallback tune (only used if music.mp3 missing) --- */
+      let audioCtx = null,
+        masterGain = null,
+        musicTimer = null,
+        melodyPos = 0,
+        nextTime = 0;
+      const MELODY = [
+        [0, 1],
+        [4, 1],
+        [7, 1],
+        [12, 1],
+        [9, 1],
+        [7, 1],
+        [4, 2],
+        [2, 1],
+        [5, 1],
+        [9, 1],
+        [7, 1],
+        [5, 1],
+        [2, 1],
+        [0, 2],
+        [4, 1],
+        [7, 1],
+        [11, 1],
+        [12, 1],
+        [11, 1],
+        [7, 1],
+        [4, 2],
+        [-1, 1],
+        [2, 1],
+        [7, 1],
+        [5, 1],
+        [2, 1],
+        [-1, 1],
+        [0, 2],
+      ];
+      const BPM = 104,
+        beat = 60 / BPM;
+      function noteFreq(s) {
+        return 220 * Math.pow(2, s / 12);
+      }
+      function ensureAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = 0.16;
+          masterGain.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === "suspended") audioCtx.resume();
+      }
+      function scheduleNote(semi, dur, t) {
+        const o = audioCtx.createOscillator(),
+          g = audioCtx.createGain();
+        o.type = "triangle";
+        o.frequency.value = noteFreq(semi);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.9, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur * beat * 0.95);
+        o.connect(g);
+        g.connect(masterGain);
+        o.start(t);
+        o.stop(t + dur * beat);
+      }
+      function fallbackLoop() {
+        if (!musicOn || mp3Ok) return;
+        const now = audioCtx.currentTime;
+        while (nextTime < now + 0.4) {
+          const [s, d] = MELODY[melodyPos];
+          scheduleNote(s, d, nextTime);
+          nextTime += d * beat;
+          melodyPos = (melodyPos + 1) % MELODY.length;
+        }
+        musicTimer = setTimeout(fallbackLoop, 120);
+      }
+      function startMusic() {
+        if (musicOn) return;
+        musicOn = true;
+        $("#musicBtn").classList.add("on");
+        $("#musicBtn").textContent = "🎶";
+        const p = bgAudio.play();
+        if (p && p.catch) {
+          p.catch(() => {
+            mp3Ok = false;
+            ensureAudio();
+            nextTime = audioCtx.currentTime + 0.05;
+            melodyPos = 0;
+            fallbackLoop();
+          });
+        }
+      }
+      function stopMusic() {
+        musicOn = false;
+        clearTimeout(musicTimer);
+        bgAudio.pause();
+        $("#musicBtn").classList.remove("on");
+        $("#musicBtn").textContent = "🎵";
+      }
+      $("#musicBtn").addEventListener("click", () => {
+        musicTouched = true;
+        musicOn ? stopMusic() : startMusic();
+      });
+
+      /* ================= SECRET MENU ================= */
+      let pressT = null;
+      const secret = $("#secret");
+      function armSecret() {
+        pressT = setTimeout(secretMenu, 850);
+      }
+      function disarmSecret() {
+        clearTimeout(pressT);
+      }
+      secret.addEventListener("touchstart", armSecret, { passive: true });
+      secret.addEventListener("touchend", disarmSecret);
+      secret.addEventListener("mousedown", armSecret);
+      secret.addEventListener("mouseup", disarmSecret);
+      function secretMenu() {
+        const v = prompt(
+          "🔒 Секрет:\n• «edit» — редактор призов\n• число 0-" +
+            (WHEEL.length - 1) +
+            " — сегмент для след. спина\n• «skip» — дальше\n• «reset» — начать сначала",
+        );
+        if (v === null) return;
+        const t = v.trim().toLowerCase();
+        if (t === "edit") {
+          openEditor();
+          return;
+        }
+        if (t === "skip") {
+          current++;
+          current < STEPS.length ? goStep() : renderFinal();
+          return;
+        }
+        if (t === "reset") {
+          current = 0;
+          wheelAngle = 0;
+          goStep();
+          return;
+        }
+        const n = parseInt(t, 10);
+        if (!isNaN(n) && n >= 0 && n < WHEEL.length) {
+          forceIndex = n;
+          alert("Следующий спин → сегмент " + n + " " + WHEEL[n].emoji);
+        }
+      }
+
+      /* ================= EDITOR ================= */
+      function openEditor() {
+        buildEditor();
+        $("#editor").classList.add("show");
+      }
+      function closeEditor() {
+        $("#editor").classList.remove("show");
+      }
+      function buildEditor() {
+        const list = $("#edList");
+        list.innerHTML = "";
+        STEPS.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "ed-item";
+          div.dataset.i = i;
+          const isPuzzle = s.type === "puzzle";
+          div.innerHTML = `
+      <div class="ed-badge">
+        <span>Приз ${i + 1} <span class="ed-type">${s.type}</span></span>
+        <button class="ed-del" data-del="${i}">Удалить</button>
+      </div>
+      <div class="row">
+        <input class="ed-emoji-in" data-f="emoji" value="${escAttr(s.prize.emoji || "")}" maxlength="4">
+        <div class="ed-field"><label>Название приза</label>
+          <input data-f="name" value="${escAttr(s.prize.name || "")}"></div>
+      </div>
+      <div class="row"><div class="ed-field"><label>Текст в карточке</label>
+        <textarea data-f="desc">${escHtml(s.prize.desc || "")}</textarea></div></div>
+      ${
+        isPuzzle
+          ? `<div class="row"><div class="ed-field"><label>Слово-ответ</label>
+        <input data-f="answer" value="${escAttr(s.answer || "")}"></div></div>
+        <div class="row"><div class="ed-field"><label>Подсказка</label>
+        <input data-f="hint" value="${escAttr(s.hint || "")}"></div></div>`
+          : ""
+      }`;
+          list.appendChild(div);
+        });
+        list.querySelectorAll("[data-del]").forEach((b) => {
+          b.addEventListener("click", () => {
+            if (STEPS.length <= 1) return;
+            STEPS.splice(+b.dataset.del, 1);
+            buildEditor();
+          });
+        });
+      }
+      function collectEditor() {
+        $("#edList")
+          .querySelectorAll(".ed-item")
+          .forEach((div) => {
+            const i = +div.dataset.i;
+            const s = STEPS[i];
+            if (!s) return;
+            div.querySelectorAll("[data-f]").forEach((inp) => {
+              const f = inp.dataset.f,
+                val = inp.value;
+              if (f === "answer") {
+                s.answer = val.toUpperCase();
+              } else if (f === "hint") {
+                s.hint = val;
+              } else {
+                s.prize[f] = val;
+              }
+            });
+          });
+      }
+      $("#edClose").addEventListener("click", closeEditor);
+      $("#editFab").addEventListener("click", () => {
+        haptic();
+        openEditor();
+      });
+      $("#edAdd").addEventListener("click", () => {
+        collectEditor();
+        STEPS.push({
+          type: "wheel",
+          label: "Бонус",
+          heading: "Ещё оборот 🎁",
+          prizeIndex: 1,
+          prize: {
+            emoji: "🎁",
+            scene: null,
+            eyebrow: "Бонус",
+            name: "Новый приз",
+            desc: "Опиши подарок здесь",
+            code: "",
+          },
+        });
+        buildEditor();
+        $("#edList").scrollIntoView(false);
+      });
+      $("#edSave").addEventListener("click", () => {
+        collectEditor();
+        saveSteps();
+        closeEditor();
+        current = Math.min(current, STEPS.length - 1);
+        wheelAngle = 0;
+        goStep();
+        alert("Сохранено ✅");
+      });
+      $("#edReset").addEventListener("click", () => {
+        if (confirm("Сбросить все призы к исходным?")) {
+          STEPS = JSON.parse(JSON.stringify(DEFAULT_STEPS));
+          saveSteps();
+          buildEditor();
+        }
+      });
+      function escAttr(s) {
+        return String(s).replace(/"/g, "&quot;").replace(/</g, "&lt;");
+      }
+      function escHtml(s) {
+        return String(s).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      /* shake keyframe */
+      const st = document.createElement("style");
+      st.textContent =
+        "@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}.shake{animation:shk .4s}";
+      document.head.appendChild(st);
+
+      /* scramble (avoid identical to answer) */
+      function scrambleWord(word) {
+        const a = word.split("");
+        if (a.length < 2) return a;
+        let tries = 0,
+          out;
+        do {
+          out = a.slice();
+          for (let i = out.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [out[i], out[j]] = [out[j], out[i]];
+          }
+          tries++;
+        } while (out.join("") === word && tries < 20);
+        return out;
+      }
+
+      goStep();
+    </script>
+  </body>
+</html>
